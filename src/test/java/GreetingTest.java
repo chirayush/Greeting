@@ -34,4 +34,19 @@ public class GreetingTest {
     public void greetShouldGreetInUppercaseWhenNameIsUppercaseJOE() {
         assertEquals("HELLO JOE!", greeting.greet("JOE"));
     }
+
+    @Test
+    public void greetShouldGreet2Names() {
+        assertEquals("Hello, Jill and Jane.", greeting.greet("Jill", "Jane"));
+    }
+
+    @Test
+    public void greetShouldGreet3Names() {
+        assertEquals("Hello, Amy, Brian, and Charlotte.", greeting.greet("Amy", "Brian", "Charlotte"));
+    }
+
+    @Test
+    public void greetShouldMixShoutingAndNormalMixing() {
+        assertEquals("Hello, Amy and Charlotte. AND HELLO BRIAN!", greeting.greet("Amy", "BRIAN", "Charlotte"));
+    }
 }
