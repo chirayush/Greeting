@@ -1,7 +1,10 @@
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 final class Greeting {
     private static final String HELLO_GREET = "Hello, ";
@@ -13,15 +16,7 @@ final class Greeting {
             return HELLO_GREET + "my friend" + PERIOD;
         }
 
-        String shoutingName = "";
-        List<String> normalNames = new ArrayList<>();
-        for (String name : names) {
-            if (StringUtils.isAllUpperCase(name)) {
-                shoutingName = name;
-            } else {
-                normalNames.add(name);
-            }
-        }
+        List<String> normalNames = getNormalNamesToGreet(names);
 
         StringBuilder greeting = new StringBuilder();
         if (!normalNames.isEmpty()) {
@@ -35,6 +30,8 @@ final class Greeting {
             }
         }
 
+        String shoutingName = getShoutingNameToGreet(names);
+
         if (!shoutingName.isEmpty()) {
             if (!normalNames.isEmpty()) {
                 greeting.append(" AND ");
@@ -43,6 +40,21 @@ final class Greeting {
         }
         return greeting.toString();
 
+    }
+
+    private String getShoutingNameToGreet(String[] names) {
+        return Arrays.stream(names)
+                .filter(StringUtils::isAllUpperCase)
+                .findFirst()
+                .orElse("");
+    }
+
+    private List<String> getNormalNamesToGreet(String[] names) {
+        return Arrays.stream(names)
+                .filter(name -> !StringUtils.isAllUpperCase(name))
+                .flatMap(name -> Arrays.stream(name.split(",")))
+                .map(String::trim)
+                .collect(Collectors.toList());
     }
 
     private void shoutName(String shoutingName, StringBuilder greeting) {

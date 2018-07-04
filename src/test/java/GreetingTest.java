@@ -3,7 +3,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class GreetingTest {
-    Greeting greeting = new Greeting();
+    private Greeting greeting = new Greeting();
 
     @Test
     public void greetShouldReturnNameForSimpleGreetingBob() {
@@ -48,5 +48,15 @@ public class GreetingTest {
     @Test
     public void greetShouldMixShoutingAndNormalMixing() {
         assertEquals("Hello, Amy and Charlotte. AND HELLO BRIAN!", greeting.greet("Amy", "BRIAN", "Charlotte"));
+    }
+
+    @Test
+    public void greetShouldSeparateOutCommaSeparatedNames() {
+        assertEquals("Hello, Bob, Charlie, and Dianne.", greeting.greet("Bob", "Charlie, Dianne"));
+    }
+
+    @Test
+    public void greetShouldSkipCommaSeparationWhenEscapedByDoubleQuotes() {
+        assertEquals("Hello, Bob and Charlie, Dianne.", greeting.greet("Bob", "\"Charlie, Dianne\""));
     }
 }
