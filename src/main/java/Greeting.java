@@ -9,15 +9,16 @@ final class Greeting {
     private static final String HELLO = "Hello, ";
     private static final String PERIOD = ".";
 
+    private StringBuilder greetingBuilder = new StringBuilder();
+
     String greet(final String... names) {
         if (names == null || names[0].isEmpty()) {
             return HELLO + "my friend.";
         }
         List<String> normalGreetNames = getNormalGreetNames(names);
 
-        StringBuilder greetingBuilder = new StringBuilder();
         if (!normalGreetNames.isEmpty()) {
-            buildNormalGreeting(normalGreetNames, greetingBuilder);
+            buildNormalGreeting(normalGreetNames);
         }
 
         String shoutingName = getShoutingName(names);
@@ -34,33 +35,57 @@ final class Greeting {
         return greetingBuilder.toString();
     }
 
-    private void buildNormalGreeting(List<String> normalGreetNames, StringBuilder greetingBuilder) {
+    private void buildNormalGreeting(List<String> normalGreetNames) {
         greetingBuilder.append(HELLO);
 
         final int greetNameSize = normalGreetNames.size();
         if (greetNameSize == 1) {
-            greetingBuilder.append(normalGreetNames.get(0));
+            greet1Name(normalGreetNames);
         } else if (greetNameSize == 2) {
-            greetingBuilder.append(normalGreetNames.get(0))
-                    .append(" and ")
-                    .append(normalGreetNames.get(1));
+            greet2Names(normalGreetNames);
         } else {
-            for (int i = 0; i < greetNameSize - 1; i++) {
-                greetingBuilder.append(normalGreetNames.get(i)).append(", ");
-            }
-
-            greetingBuilder.append("and ")
-                    .append(getLastName(normalGreetNames));
+            greetMultipleNames(normalGreetNames, greetNameSize);
         }
 
         greetingBuilder.append(PERIOD);
     }
 
+    private void greetMultipleNames(List<String> normalGreetNames, int greetNameSize) {
+        for (int i = 0; i < greetNameSize - 1; i++) {
+            greetingBuilder.append(normalGreetNames.get(i)).append(", ");
+        }
+
+        greetingBuilder.append("and ")
+                .append(getLastName(normalGreetNames));
+    }
+
+    private void greet2Names(List<String> normalGreetNames) {
+        greetingBuilder.append(normalGreetNames.get(0))
+                .append(" and ")
+                .append(normalGreetNames.get(1));
+    }
+
+    private void greet1Name(List<String> normalGreetNames) {
+        greetingBuilder.append(normalGreetNames.get(0));
+    }
+
     private List<String> getNormalGreetNames(String[] names) {
-        return Arrays.stream(names)
+        List<String> greetNameList = Arrays.asList(names);
+        if (Arrays.stream(names).anyMatch(name -> name.contains("\""))) {
+            greetNameList = Arrays.stream(names)
+                    .map(name -> name
+                            .replace(",", ":")
+                            .replace("\"", ""))
+                    .collect(Collectors.toList());
+        }
+        return greetNameList.stream()
                 .filter(name -> !StringUtils.isAllUpperCase(name))
+                .flatMap(name -> Arrays.stream(name.split(",")))
+                .map(String::trim)
+                .map(name -> name.replace(":", ","))
                 .collect(Collectors.toList());
     }
+
 
     private String getShoutingName(String[] names) {
         return Arrays.stream(names)

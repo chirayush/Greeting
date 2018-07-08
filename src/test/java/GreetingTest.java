@@ -22,7 +22,7 @@ public class GreetingTest {
 
     @Test
     public void greetShouldReturnMyFriendWhenNameIsNull() {
-        assertEquals("Hello, my friend.", greeting.greet(null));
+        assertEquals("Hello, my friend.", greeting.greet( null));
     }
 
     @Test
@@ -60,9 +60,14 @@ public class GreetingTest {
         assertEquals("Hello, Bob, Charlie, and Dianne.", greeting.greet("Bob", "Charlie, Dianne"));
     }
 
-//    @Test
-//    public void greetShouldSkipCommaSeparationWhenEscapedByDoubleQuotes() {
-//        assertEquals("Hello, Bob and Charlie, Dianne.", greeting.greet("Bob", "\"Charlie, Dianne\""));
-//    }
+    @Test
+    public void greetShouldSkipCommaSeparationWhenEscapedByDoubleQuotes() {
+        assertEquals("Hello, Bob and Charlie, Dianne.", greeting.greet("Bob", "\"Charlie, Dianne\""));
+    }
+
+    @Test
+    public void greetShouldSeparateOutCSVAndEscapeDoubleQuotes() {
+        assertEquals("Hello, Bob, Amy, Brian, and Charlie, Dianne.", greeting.greet("Bob", "Amy, Brian", "\"Charlie, Dianne\""));
+    }
 }
 
